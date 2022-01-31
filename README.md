@@ -48,10 +48,10 @@ evoke configure master --accept-eula -h conjur.vx --master-altnames conjur.vx -p
 ```
 - Setup Conjur certificates
 - The `conjur-certs.tgz` include CA, Master and follower certificates for my lab use, you should generate your own certificates
-- Refer to https://github.com/joetanx/conjur-k8s/blob/main/generate-conjur-certificates.md for a guide to generate your own certificates
+- Refer to https://github.com/joetanx/conjur-master/blob/main/generate-conjur-certificates.md for a guide to generate your own certificates
 > Note: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
 ```console
-curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-k8s/raw/main/conjur-certs.tgz
+curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
 tar xvf conjur-certs.tgz
 evoke ca import --root central.pem
 evoke ca import --key follower.default.svc.cluster.local.key follower.default.svc.cluster.local.pem
@@ -124,10 +124,10 @@ systemctl enable conjur
 ```
 - Setup Conjur certificates
 - The `conjur-certs.tgz` include CA, Master and follower certificates for my lab use, you should generate your own certificates
-- Refer to https://github.com/joetanx/conjur-k8s/blob/main/generate-conjur-certificates.md for a guide to generate your own certificates
+- Refer to https://github.com/joetanx/conjur-master/blob/main/generate-conjur-certificates.md for a guide to generate your own certificates
 > Note: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
 ```console
-curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-k8s/raw/main/conjur-certs.tgz
+curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
 podman cp conjur-certs.tgz conjur:/tmp/
 podman exec conjur tar xvf /tmp/conjur-certs.tgz -C /tmp/
 podman exec conjur evoke ca import --root /tmp/central.pem
