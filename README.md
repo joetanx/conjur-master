@@ -84,7 +84,7 @@ rm -f conjur-appliance_12.4.1.tar.gz
 - Stage the volume mounts and download the conjur configuration file
 ```console
 mkdir -p /opt/cyberark/dap/{security,config,backups,seeds,logs}
-curl -L -o /opt/cyberark/dap/config/conjur.yml https://github.com/joetanx/conjur-k8s/raw/main/conjur.yml
+curl -L -o /opt/cyberark/dap/config/conjur.yml https://github.com/joetanx/conjur-master/raw/main/conjur.yml
 ```
 - Download the Conjur CLI and add execute permissions
 - Ref: https://github.com/cyberark/conjur-api-python3/releases
