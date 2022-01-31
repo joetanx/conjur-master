@@ -1,8 +1,8 @@
-# 4. Setup Conjur Master
+# Setup Conjur Master
 Conjur Master deployment options:
 1. On RHEL directly - Conjur on RHEL is under Controlled Availability, contact CyberArk for this deployment option
 2. As a container
-## 4.1. RHEL Based Master
+## 1. RHEL Based Master
 - The Conjur-RHEL installer comes with an older version of keyutils in its repository which will fail to install if your RHEL is updated or if you're installing on RHEL 8.5. Manually installing keyutils resolves this.
 ```console
 yum -y install http://mirror.centos.org/centos/8/BaseOS/x86_64/os/Packages/keyutils-1.5.10-9.el8.x86_64.rpm
@@ -67,7 +67,7 @@ rm -f *.pem
 conjur init -u https://conjur.vx
 conjur login -i admin -p CyberArk123!
 ```
-## 4.2. Container Based Master
+## 2. Container Based Master
 - Install podman
 ```console
 yum -y installl podman
