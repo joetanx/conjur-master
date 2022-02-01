@@ -75,3 +75,23 @@ rm -f conjur-certs.tgz
 conjur init -u https://conjur.vx
 conjur login -i admin -p CyberArk123!
 ```
+# Staging secret variables
+- Pre-requisites
+  - Setup MySQL database according to this guide: https://github.com/joetanx/conjur-mysql
+  - Have an AWS IAM user account with programmatic access
+- Credentials are configured by `app-vars.yaml` in `world_db` and `aws_api` policies that are defined with the respective secret variables
+- Download the Conjur policies
+```console
+curl -L -o app-vars.yaml https://github.com/joetanx/conjur-master/raw/main/app-vars.yaml
+```
+- Load the policies to Conjur
+```console
+conjur policy load -b root -f app-vars.yaml
+```
+- Populate the variables
+```console
+conjur variable set -i world_db/username -v cityapp
+conjur variable set -i world_db/password -v Cyberark1
+conjur variable set -i aws_api/awsakid -v <AWS_ACCESS_KEY_ID>
+conjur variable set -i aws_api/awssak -v <AWS_SECRET_ACCESS_KEY>
+```
