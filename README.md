@@ -96,3 +96,7 @@ conjur variable set -i world_db/password -v Cyberark1
 conjur variable set -i aws_api/awsakid -v <AWS_ACCESS_KEY_ID>
 conjur variable set -i aws_api/awssak -v <AWS_SECRET_ACCESS_KEY>
 ```
+- Clean-up
+```console
+rm -f app-vars.yaml
+```
