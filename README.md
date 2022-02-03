@@ -64,7 +64,7 @@ podman cp conjur-certs.tgz conjur:/opt/cyberark/dap/certificates/
 podman exec conjur tar xvf /opt/cyberark/dap/certificates/conjur-certs.tgz -C /opt/cyberark/dap/certificates/
 podman exec conjur evoke ca import -fr /opt/cyberark/dap/certificates/central.pem
 podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/conjurMaster.key -s /opt/cyberark/dap/certificates/conjurMaster.pem
-podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/ConjurFollowers.key /opt/cyberark/dap/certificates/ConjurFollowers.pem
+podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/conjurFollowers.key /opt/cyberark/dap/certificates/conjurFollowers.pem
 ```
 - Clean-up
 ```console
