@@ -62,7 +62,7 @@ curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/co
 podman cp conjur-certs.tgz conjur:/tmp/
 podman exec conjur tar xvf /tmp/conjur-certs.tgz -C /tmp/
 podman exec conjur evoke ca import --root /tmp/central.pem
-podman exec conjur evoke ca import --key /tmp/follower.default.svc.cluster.local.key /tmp/follower.default.svc.cluster.local.pem
+podman exec conjur evoke ca import --key /tmp/follower.vx.key /tmp/follower.vx.pem
 podman exec conjur evoke ca import --key /tmp/conjur.vx.key --set /tmp/conjur.vx.pem
 ```
 - Clean-up
