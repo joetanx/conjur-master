@@ -59,15 +59,16 @@ systemctl enable conjur
 > Note: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
 ```console
 curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
-podman cp conjur-certs.tgz conjur:/tmp/
-podman exec conjur tar xvf /tmp/conjur-certs.tgz -C /tmp/
-podman exec conjur evoke ca import --root /tmp/central.pem
-podman exec conjur evoke ca import --key /tmp/follower.vx.key /tmp/follower.vx.pem
-podman exec conjur evoke ca import --key /tmp/conjur.vx.key --set /tmp/conjur.vx.pem
+podman exec conjur mkdir -p /opt/cyberark/dap/certificates
+podman cp conjur-certs.tgz conjur:/opt/cyberark/dap/certificates/
+podman exec conjur tar xvf /opt/cyberark/dap/certificates/conjur-certs.tgz -C /opt/cyberark/dap/certificates/
+podman exec conjur evoke ca import -fr /opt/cyberark/dap/certificates/central.pem
+podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/conjurMaster.key -s /opt/cyberark/dap/certificates/conjurMaster.pem
+podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/ConjurFollowers.key /opt/cyberark/dap/certificates/ConjurFollowers.pem
 ```
 - Clean-up
 ```console
-podman exec conjur /bin/sh -c "rm -f /tmp/conjur-certs.tgz /tmp/*.pem /tmp/*key"
+podman exec conjur /bin/sh rm -rf /opt/cyberark/dap/certificates
 rm -f conjur-certs.tgz
 ```
 - Initialize Conjur CLI and login to conjur
