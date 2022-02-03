@@ -68,7 +68,7 @@ podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/ConjurFollo
 ```
 - Clean-up
 ```console
-podman exec conjur /bin/sh rm -rf /opt/cyberark/dap/certificates
+podman exec conjur rm -rf /opt/cyberark/dap/certificates
 rm -f conjur-certs.tgz
 ```
 - Initialize Conjur CLI and login to conjur
