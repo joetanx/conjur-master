@@ -1,3 +1,7 @@
+### Software Versions
+- RHEL 8.5
+- Conjur 12.4
+
 # Setup Conjur Master
 - Install podman
 ```console
