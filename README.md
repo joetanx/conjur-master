@@ -21,8 +21,7 @@ rm -f conjur-appliance_12.4.1.tar.gz
 mkdir -p /opt/cyberark/dap/{security,config,backups,seeds,logs}
 curl -L -o /opt/cyberark/dap/config/conjur.yml https://github.com/joetanx/conjur-master/raw/main/conjur.yml
 ```
-- Download the Conjur CLI and add execute permissions
-- Ref: https://github.com/cyberark/conjur-api-python3/releases
+- Setup Conjur CLI, ref: https://github.com/cyberark/conjur-api-python3/releases
 ```console
 curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
 tar xvf conjur-cli-rhel-8.tar.gz
