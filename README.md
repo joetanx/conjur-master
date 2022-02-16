@@ -45,6 +45,28 @@ podman run --name conjur -d \
 -v /opt/cyberark/dap/logs:/var/log/conjur:Z \
 registry.tld/conjur-appliance:12.4.1
 ```
+- **Alternative:** Run the Conjur container on **host network**
+```console
+podman run --name conjur -d \
+--restart=unless-stopped \
+--security-opt seccomp=unconfined \
+--network host \
+--log-driver journald \
+-v /opt/cyberark/dap/config:/etc/conjur/config:Z \
+-v /opt/cyberark/dap/security:/opt/cyberark/dap/security:Z \
+-v /opt/cyberark/dap/backups:/opt/conjur/backup:Z \
+-v /opt/cyberark/dap/seeds:/opt/cyberark/dap/seeds:Z \
+-v /opt/cyberark/dap/logs:/var/log/conjur:Z \
+registry.tld/conjur-appliance:12.4.1
+```
+- **Alternative:** Add firewall rules if you are running the Conjur container on **host network**
+```console
+firewall-cmd --add-service https --permanent
+firewall-cmd --add-service postgresql --permanent
+firewall-cmd --add-port 444/tcp --permanent
+firewall-cmd --add-port 1999/tcp --permanent
+firewall-cmd --reload
+```
 - Setup the Conjur container as master
 - Edit the admin account password in `-p` option and the Conjur account (`cyberark`) according to your environment
 ```console
