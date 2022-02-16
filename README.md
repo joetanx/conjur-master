@@ -5,7 +5,7 @@
 # Setup Conjur Master
 - Install podman
 ```console
-yum -y installl podman
+yum -y install podman
 ```
 - Obtain the Conjur container image from CyberArk
 - Upload the Conjur container image to the container host
