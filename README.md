@@ -2,7 +2,7 @@
 - RHEL 8.5
 - Conjur 12.4
 
-# Setup Conjur Master
+# Running the Conjur appliance
 - Install podman
 ```console
 yum -y install podman
@@ -31,7 +31,8 @@ mv conjur /usr/local/bin/
 ```console
 rm -f conjur-cli-rhel-8.tar.gz
 ```
-- Run the Conjur container
+## Running Conjur master on the default bridge network
+- Podman run command:
 ```console
 podman run --name conjur -d \
 --restart=unless-stopped \
@@ -45,7 +46,8 @@ podman run --name conjur -d \
 -v /opt/cyberark/dap/logs:/var/log/conjur:Z \
 registry.tld/conjur-appliance:12.4.1
 ```
-- **Alternative:** Run the Conjur container on **host network**
+## Alternative: Running Conjur master on the Podman host network
+- Podman run command:
 ```console
 podman run --name conjur -d \
 --restart=unless-stopped \
@@ -59,7 +61,7 @@ podman run --name conjur -d \
 -v /opt/cyberark/dap/logs:/var/log/conjur:Z \
 registry.tld/conjur-appliance:12.4.1
 ```
-- **Alternative:** Add firewall rules if you are running the Conjur container on **host network**
+- Add firewall rules on the Podman host
 ```console
 firewall-cmd --add-service https --permanent
 firewall-cmd --add-service postgresql --permanent
@@ -67,7 +69,7 @@ firewall-cmd --add-port 444/tcp --permanent
 firewall-cmd --add-port 1999/tcp --permanent
 firewall-cmd --reload
 ```
-- Setup the Conjur container as master
+# Configure the Conjur appliance as master
 - Edit the admin account password in `-p` option and the Conjur account (`cyberark`) according to your environment
 ```console
 podman exec conjur evoke configure master --accept-eula -h conjur.vx --master-altnames "conjur.vx" -p CyberArk123! cyberark
