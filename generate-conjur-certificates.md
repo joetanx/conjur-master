@@ -6,13 +6,14 @@ To understand Conjur certificate architecture, read: https://docs.cyberark.com/P
 
 This optional step generates a self-signed CA, and uses the self-signed CA to sign the Conjur Master and followers certificates.
 
-1.0 Generate a self-signed certificate authority
+## 1.0 Generate a self-signed certificate authority
+### 1.1 Method 1: Generate key first, then CSR, then certificate
 - Generate private key of the self-signed certificate authority
 ```console
 root@conjur:~# openssl genrsa -out ConjurDemoCA.key 2048
 Generating RSA private key, 2048 bit long modulus (2 primes)
-.....................................................+++++
-............................+++++
+.................................................................................................+++++
+...................................................................................+++++
 e is 65537 (0x010001)
 ```
 - Generate certificate of the self-signed certificate authority
@@ -26,15 +27,38 @@ There are quite a few fields but you can leave some blank
 For some fields there will be a default value,
 If you enter '.', the field will be left blank.
 -----
-Country Name (2 letter code) [AU]:SG
-State or Province Name (full name) [Some-State]:Singapore
-Locality Name (eg, city) []:
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:CyberArk Software Pte. Ltd.
+Country Name (2 letter code) [XX]:.
+State or Province Name (full name) []:
+Locality Name (eg, city) [Default City]:.
+Organization Name (eg, company) [Default Company Ltd]:.
 Organizational Unit Name (eg, section) []:
-Common Name (e.g. server FQDN or YOUR name) []:Conjur Demo Certificate Authority
-Email Address []:joe.tan@cyberark.com
+Common Name (eg, your name or your server's hostname) []:Conjur Demo Certificate Authority
+Email Address []:
 ```
-2.0 Generate certificate for Conjur Master
+### 1.2 Method 2: Generate key and certificate in a single command
+```console
+[root@conjur ~]# openssl req -newkey rsa:2048 -days "365" -nodes -x509 -keyout ConjurDemoCA.key -out ConjurDemoCA.pem
+Generating a RSA private key
+......................+++++
+.................................................................................................................................+++++
+writing new private key to 'ConjurDemoCA.key'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:.
+State or Province Name (full name) []:
+Locality Name (eg, city) [Default City]:.
+Organization Name (eg, company) [Default Company Ltd]:.
+Organizational Unit Name (eg, section) []:
+Common Name (eg, your name or your server's hostname) []:Conjur Demo Certificate Authority
+Email Address []:
+```
+## 2.0 Generate certificate for Conjur Master
 > Note: change the common name/subject alternative name of the certificate according to your environment
 > 
 > The name must match the Conjur Master FQDN that the follower will be using to communicate to the Conjur Master
@@ -54,7 +78,7 @@ echo "subjectAltName=DNS:master.conjur.demo" > master.conjur.demo-openssl.cnf
 ```console
 openssl x509 -req -in master.conjur.demo.csr -CA ConjurDemoCA.pem -CAkey ConjurDemoCA.key -CAcreateserial -days 365 -sha256 -out master.conjur.demo.pem -extfile master.conjur.demo-openssl.cnf
 ```
-3.0 Generate certificate for Conjur Follower
+## 3.0 Generate certificate for Conjur Follower
 > Note: change the common name/subject alternative name of the certificate according to your environment
 > 
 > The name must match the follower FQDN that the follower will be using to communicate to the Conjur Master
@@ -70,7 +94,7 @@ openssl req -new -key follower.conjur.svc.cluster.local.key -subj "/CN=follower.
 ```
 - Create OpenSSL configuration file to add subject alternative name
 ```console
-echo "subjectAltName=DNS:follower.conjur.svc.cluster.local" > follower.conjur.svc.cluster.local-openssl.cnf
+echo "subjectAltName=DNS:follower.conjur.demo,DNS:follower.conjur.svc.cluster.local" > follower.conjur.svc.cluster.local-openssl.cnf
 ```
 - Generate certificate of the Conjur Follower certificate
 ```console
