@@ -23,7 +23,7 @@ rm -f conjur-appliance_12.4.1.tar.gz
 mkdir -p /opt/cyberark/dap/{security,config,backups,seeds,logs}
 curl -L -o /opt/cyberark/dap/config/conjur.yml https://github.com/joetanx/conjur-master/raw/main/conjur.yml
 ```
-- Setup Conjur CLI, ref: https://github.com/cyberark/conjur-api-python3/releases
+- Setup Conjur CLI, ref: <https://github.com/cyberark/conjur-api-python3/releases>
 ```console
 curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
 tar xvf conjur-cli-rhel-8.tar.gz
@@ -80,14 +80,14 @@ firewall-cmd --reload
 podman exec conjur evoke configure master --accept-eula -h conjur.vx --master-altnames "conjur.vx" -p CyberArk123! cyberark
 ```
 - Run the Conjur container as systemd service and configure it to setup with container host
-- Ref: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/running_containers_as_systemd_services_with_podman
+- Ref: <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/running_containers_as_systemd_services_with_podman>
 ```console
 podman generate systemd conjur --name --container-prefix="" --separator="" > /etc/systemd/system/conjur.service
 systemctl enable conjur
 ```
 - Setup Conjur certificates
 - The `conjur-certs.tgz` include CA, Master and follower certificates for my lab use, you should generate your own certificates
-- Refer to https://github.com/joetanx/conjur-master/blob/main/generate-conjur-certificates.md for a guide to generate your own certificates
+- Refer to <https://github.com/joetanx/conjur-master/blob/main/generate-conjur-certificates.md> for a guide to generate your own certificates
 > Note: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
 ```console
 curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
@@ -111,7 +111,7 @@ conjur login -i admin -p CyberArk123!
 
 # Staging secret variables
 - Pre-requisites
-  - Setup MySQL database according to this guide: https://github.com/joetanx/conjur-mysql
+  - Setup MySQL database according to this guide: <https://github.com/joetanx/conjur-mysql>
   - Have an AWS IAM user account with programmatic access
 - Credentials are configured by `app-vars.yaml` in `world_db` and `aws_api` policies that are defined with the respective secret variables
 - Download the Conjur policies
