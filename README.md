@@ -2,7 +2,7 @@
 
 ### Software Versions
 - RHEL 8.5
-- Conjur 12.4
+- Conjur Enterprise 12.4
 
 # Running the Conjur appliance
 - Install podman
