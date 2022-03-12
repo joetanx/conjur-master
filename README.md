@@ -1,4 +1,4 @@
-# Setup Conjur Enterprise 12.4 Master with Red Hat Enterprise Linux 8.5 and Podman
+# Setup Conjur Enterprise Master on RHEL with Podman
 
 ### Software Versions
 - RHEL 8.5
