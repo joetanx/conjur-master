@@ -111,7 +111,7 @@ conjur login -i admin -p CyberArk123!
 
 # Staging secret variables
 - Pre-requisites
-  - Setup MySQL database according to this guide: <https://joetanx.github.ip/conjur-mysql>
+  - Setup MySQL database according to this guide: <https://joetanx.github.io/conjur-mysql>
   - Have an AWS IAM user account with programmatic access
 - Credentials are configured by `app-vars.yaml` in `world_db` and `aws_api` policies that are defined with the respective secret variables
 - Download the Conjur policies
