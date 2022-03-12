@@ -1,4 +1,5 @@
 # Setup Conjur Enterprise 12.4 on Red Hat Enterprise Linux 8.5 with Podman
+
 ### Software Versions
 - RHEL 8.5
 - Conjur 12.4
@@ -32,6 +33,7 @@ mv conjur /usr/local/bin/
 ```console
 rm -f conjur-cli-rhel-8.tar.gz
 ```
+
 ## Running Conjur master on the default bridge network
 - Podman run command:
 ```console
@@ -47,6 +49,7 @@ podman run --name conjur -d \
 -v /opt/cyberark/dap/logs:/var/log/conjur:Z \
 registry.tld/conjur-appliance:12.4.1
 ```
+
 ## Alternative: Running Conjur master on the Podman host network
 - Podman run command:
 ```console
@@ -70,6 +73,7 @@ firewall-cmd --add-port 444/tcp --permanent
 firewall-cmd --add-port 1999/tcp --permanent
 firewall-cmd --reload
 ```
+
 # Configure the Conjur appliance as master
 - Edit the admin account password in `-p` option and the Conjur account (`cyberark`) according to your environment
 ```console
@@ -104,6 +108,7 @@ rm -f conjur-certs.tgz
 conjur init -u https://conjur.vx
 conjur login -i admin -p CyberArk123!
 ```
+
 # Staging secret variables
 - Pre-requisites
   - Setup MySQL database according to this guide: https://github.com/joetanx/conjur-mysql
