@@ -87,8 +87,8 @@ systemctl enable conjur
 ```
 - Setup Conjur certificates
 - The `conjur-certs.tgz` include CA, Master and follower certificates for my lab use, you should generate your own certificates
-- Refer to <https://github.com/joetanx/conjur-master/blob/main/generate-conjur-certificates.md> for a guide to generate your own certificates
-> Note: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
+- Refer to <https://joetanx.github.io/self-signed-ca/> for a guide to generate your own certificates
+- **Note**: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
 ```console
 curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
 podman exec conjur mkdir -p /opt/cyberark/dap/certificates
