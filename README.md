@@ -4,11 +4,16 @@
 - RHEL 8.5
 - Conjur Enterprise 12.5
 
-# Running the Conjur appliance
-- Install podman
+# 1.0 Setup host prerequisites
+## 1.1 Install necessary packages
+- Install `podman` and `policycoreutils-python-utils` packages
+- The `policycoreutils-python-utils` is required for the `semanage fcontext` command, which is used to allow the Postgres container to access the data directory on the host
 ```console
-yum -y install podman
+yum install -y podman policycoreutils-python-utils
+systemctl enable --now podman
 ```
+
+## 1.2 Load the Conjur appliance image
 - Obtain the Conjur container image from CyberArk
 - Upload the Conjur container image to the container host
 ```console
@@ -18,16 +23,19 @@ podman load -i conjur-appliance_12.5.0.tar.gz
 ```console
 rm -f conjur-appliance_12.5.0.tar.gz
 ```
-- Stage the data directories
-    - Several directories will be mounted to Conjur appliance
-    - To allow the Conjur appliance access to the data directory, the SELinux type label needs to be assigned to `svirt_sandbox_file_t`
-    - SELinux can also simply be disabled, but that is not preferred
+
+## 1.3 Stage the data directories
+- Several directories will be mounted to Conjur appliance
+- To allow the Conjur appliance access to the data directory, the SELinux type label needs to be assigned to `svirt_sandbox_file_t`
+- SELinux can also simply be disabled, but that is not preferred
 ```console
 mkdir -p /opt/conjur/{security,config,backups,seeds,logs}
 semanage fcontext -a -t svirt_sandbox_file_t "/opt/conjur(/.*)?"
 restorecon -R -v /opt/conjur
 ```
-- Setup Conjur CLI, ref: <https://github.com/cyberark/conjur-api-python3/releases>
+
+## 1.4 Setup Conjur CLI
+- Ref: <https://github.com/cyberark/conjur-api-python3/releases>
 ```console
 curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
 tar xvf conjur-cli-rhel-8.tar.gz
@@ -38,7 +46,7 @@ mv conjur /usr/local/bin/
 rm -f conjur-cli-rhel-8.tar.gz
 ```
 
-## Running Conjur master on the default bridge network
+## 1.5.1 Method 1: Running Conjur master on the default bridge network
 - Podman run command:
 ```console
 podman run --name conjur -d \
@@ -54,7 +62,7 @@ podman run --name conjur -d \
 registry.tld/conjur-appliance:12.5.0
 ```
 
-## Alternative: Running Conjur master on the Podman host network
+## 1.5.2 Method 2: Running Conjur master on the Podman host network
 - Podman run command:
 ```console
 podman run --name conjur -d \
@@ -78,21 +86,24 @@ firewall-cmd --add-port 1999/tcp --permanent
 firewall-cmd --reload
 ```
 
-# Configure the Conjur appliance as master
+# 2.0 Configure the Conjur appliance as master
+## 2.1 Initialize the Conjur appliance
 - Edit the admin account password in `-p` option and the Conjur account (`cyberark`) according to your environment
 ```console
 podman exec conjur evoke configure master --accept-eula -h conjur.vx --master-altnames "conjur.vx" -p CyberArk123! cyberark
 ```
+
+## 2.2 Configure container to start on boot
 - Run the Conjur container as systemd service and configure it to setup with container host
 - Ref: <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/running_containers_as_systemd_services_with_podman>
 ```console
 podman generate systemd conjur --name --container-prefix="" --separator="" > /etc/systemd/system/conjur.service
 systemctl enable conjur
 ```
-- Setup Conjur certificates
-- The `conjur-certs.tgz` include CA, Master and follower certificates for my lab use, you should generate your own certificates
+## 2.3 Setup Conjur certificates
+- The `conjur-certs.tgz` include personal certificate chain for CA, Master and follower, you should generate your own certificates
 - Refer to <https://joetanx.github.io/self-signed-ca/> for a guide to generate your own certificates
-- **Note**: In event of "error: cert already in hash table", ensure that conjur/follower certificates do not contain the CA certificate
+- **Note**: In event of `error: cert already in hash table`, ensure that the Conjur serverfollower certificates do not contain the CA certificate
 ```console
 curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
 podman exec conjur mkdir -p /opt/cyberark/dap/certificates
@@ -107,13 +118,14 @@ podman exec conjur evoke ca import -k /opt/cyberark/dap/certificates/follower.co
 podman exec conjur rm -rf /opt/cyberark/dap/certificates
 rm -f conjur-certs.tgz
 ```
-- Initialize Conjur CLI and login to conjur
+
+## 2.4 Initialize Conjur CLI and login to conjur
 ```console
 conjur init -u https://conjur.vx
 conjur login -i admin -p CyberArk123!
 ```
 
-# Staging secret variables
+## 3.0 Staging secret variables
 - Integration guides in my GitHub uses the secrets set in this step
 - Pre-requisites
   - Setup MySQL database according to this guide: <https://joetanx.github.io/conjur-mysql>
