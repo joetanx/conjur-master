@@ -2,7 +2,7 @@
 
 ### Software Versions
 - RHEL 8.5
-- Conjur Enterprise 12.4
+- Conjur Enterprise 12.5
 
 # Running the Conjur appliance
 - Install podman
@@ -12,16 +12,20 @@ yum -y install podman
 - Obtain the Conjur container image from CyberArk
 - Upload the Conjur container image to the container host
 ```console
-podman load -i conjur-appliance_12.4.1.tar.gz
+podman load -i conjur-appliance_12.5.0.tar.gz
 ```
 - Clean-up
 ```console
-rm -f conjur-appliance_12.4.1.tar.gz
+rm -f conjur-appliance_12.5.0.tar.gz
 ```
-- Stage the volume mounts and download the conjur configuration file
+- Stage the data directories
+    - Several directories will be mounted to Conjur appliance
+    - To allow the Conjur appliance access to the data directory, the SELinux type label needs to be assigned to `svirt_sandbox_file_t`
+    - SELinux can also simply be disabled, but that is not preferred
 ```console
-mkdir -p /opt/cyberark/dap/{security,config,backups,seeds,logs}
-curl -L -o /opt/cyberark/dap/config/conjur.yml https://github.com/joetanx/conjur-master/raw/main/conjur.yml
+mkdir -p /opt/conjur/{security,config,backups,seeds,logs}
+semanage fcontext -a -t svirt_sandbox_file_t "/opt/conjur(/.*)?"
+restorecon -R -v /opt/conjur
 ```
 - Setup Conjur CLI, ref: <https://github.com/cyberark/conjur-api-python3/releases>
 ```console
@@ -42,12 +46,12 @@ podman run --name conjur -d \
 --security-opt seccomp=unconfined \
 -p "443:443" -p "444:444" -p "5432:5432" -p "1999:1999" \
 --log-driver journald \
--v /opt/cyberark/dap/config:/etc/conjur/config:Z \
--v /opt/cyberark/dap/security:/opt/cyberark/dap/security:Z \
--v /opt/cyberark/dap/backups:/opt/conjur/backup:Z \
--v /opt/cyberark/dap/seeds:/opt/cyberark/dap/seeds:Z \
--v /opt/cyberark/dap/logs:/var/log/conjur:Z \
-registry.tld/conjur-appliance:12.4.1
+-v /opt/conjur/config:/etc/conjur/config:Z \
+-v /opt/conjur/security:/opt/cyberark/dap/security:Z \
+-v /opt/conjur/backups:/opt/conjur/backup:Z \
+-v /opt/conjur/seeds:/opt/cyberark/dap/seeds:Z \
+-v /opt/conjur/logs:/var/log/conjur:Z \
+registry.tld/conjur-appliance:12.5.0
 ```
 
 ## Alternative: Running Conjur master on the Podman host network
@@ -58,12 +62,12 @@ podman run --name conjur -d \
 --security-opt seccomp=unconfined \
 --network host \
 --log-driver journald \
--v /opt/cyberark/dap/config:/etc/conjur/config:Z \
--v /opt/cyberark/dap/security:/opt/cyberark/dap/security:Z \
--v /opt/cyberark/dap/backups:/opt/conjur/backup:Z \
--v /opt/cyberark/dap/seeds:/opt/cyberark/dap/seeds:Z \
--v /opt/cyberark/dap/logs:/var/log/conjur:Z \
-registry.tld/conjur-appliance:12.4.1
+-v /opt/conjur/config:/etc/conjur/config:Z \
+-v /opt/conjur/security:/opt/cyberark/dap/security:Z \
+-v /opt/conjur/backups:/opt/conjur/backup:Z \
+-v /opt/conjur/seeds:/opt/cyberark/dap/seeds:Z \
+-v /opt/conjur/logs:/var/log/conjur:Z \
+registry.tld/conjur-appliance:12.5.0
 ```
 - Add firewall rules on the Podman host
 ```console
