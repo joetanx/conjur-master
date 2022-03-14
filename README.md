@@ -110,6 +110,7 @@ conjur login -i admin -p CyberArk123!
 ```
 
 # Staging secret variables
+- Integration guides in my GitHub uses the secrets set in this step
 - Pre-requisites
   - Setup MySQL database according to this guide: <https://joetanx.github.io/conjur-mysql>
   - Have an AWS IAM user account with programmatic access
