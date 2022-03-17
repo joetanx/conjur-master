@@ -100,6 +100,7 @@ podman exec conjur evoke configure master --accept-eula -h conjur.vx --master-al
 podman generate systemd conjur --name --container-prefix="" --separator="" > /etc/systemd/system/conjur.service
 systemctl enable conjur
 ```
+
 ## 2.3 Setup Conjur certificates
 - The `conjur-certs.tgz` include personal certificate chain for CA, Master and follower, you should generate your own certificates
 - Refer to <https://joetanx.github.io/self-signed-ca/> for a guide to generate your own certificates
