@@ -2,6 +2,7 @@
 
 ### Software Versions
 - RHEL 8.5
+- Podman 3.3.1
 - Conjur Enterprise 12.5
 
 # 1.0 Setup host prerequisites
