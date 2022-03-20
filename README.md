@@ -6,48 +6,40 @@
 - Conjur Enterprise 12.5
 
 # 1.0 Setup host prerequisites
-## 1.1 Install necessary packages
-- Install `podman` and `policycoreutils-python-utils` packages
-- The `policycoreutils-python-utils` is required for the `semanage fcontext` command, which is used to allow the Postgres container to access the data directory on the host
+- Install Podman
+- Upload `conjur-appliance_12.5.0.tar.gz` to the container host: contact your CyberArk representative to acquire the Conjur container image
+- Prepare data directories: these directories will be mounted to the Conjur container as volumes
+- Setup [Conjur CLI](https://github.com/cyberark/cyberark-conjur-cli): the client tool to interface with Conjur
 ```console
-yum install -y podman policycoreutils-python-utils
-systemctl enable --now podman
-```
-
-## 1.2 Load the Conjur appliance image
-- Obtain the Conjur container image from CyberArk
-- Upload the Conjur container image to the container host
-```console
+yum install -y podman
 podman load -i conjur-appliance_12.5.0.tar.gz
+mkdir -p /opt/conjur/{security,config,backups,seeds,logs}
+curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
+tar xvf conjur-cli-rhel-8.tar.gz
+mv conjur /usr/local/bin/
+rm -f conjur-cli-rhel-8.tar.gz
 ```
 - Clean-up
 ```console
 rm -f conjur-appliance_12.5.0.tar.gz
 ```
 
-## 1.3 Stage the data directories
-- Several directories will be mounted to Conjur appliance
-- To allow the Conjur appliance access to the data directory, the SELinux type label needs to be assigned to `svirt_sandbox_file_t`
-- SELinux can also simply be disabled, but that is not preferred
-```console
-mkdir -p /opt/conjur/{security,config,backups,seeds,logs}
-semanage fcontext -a -t svirt_sandbox_file_t "/opt/conjur(/.*)?"
-restorecon -R -v /opt/conjur
-```
+## 1.1 Note on SELinux and Container Volumes
+- SELinux may prevent the container access to the data directories without the appropriate SELinux labels
+- Ref: [podman-run - Labeling Volume Mounts](https://docs.podman.io/en/latest/markdown/podman-run.1.html)
+- There are 2 ways to enable container access to the data directories:
+  1. Use `semanage fcontext` and `restorecon` to relabel the data directories
+    ```console
+    yum install -y policycoreutils-python-utils
+    semanage fcontext -a -t svirt_sandbox_file_t "/opt/conjur(/.*)?"
+    restorecon -R -v /opt/conjur
+    ```
+  2. Add `:z` or `:Z` to the volume mounts when running the container so that Podman will automatically label the data directories
+    - `:z` - indicates that content is shared among multiple container
+    - `:Z` - indicates that content is is private and unshared
 
-## 1.4 Setup Conjur CLI
-- Ref: <https://github.com/cyberark/conjur-api-python3/releases>
-```console
-curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
-tar xvf conjur-cli-rhel-8.tar.gz
-mv conjur /usr/local/bin/
-```
-- Clean-up
-```console
-rm -f conjur-cli-rhel-8.tar.gz
-```
-
-## 1.5.1 Method 1: Running Conjur master on the default bridge network
+# 2.0. Deploy Conjur master
+### 2.1.1 Method 1: Running Conjur master on the default bridge network
 - Podman run command:
 ```console
 podman run --name conjur -d \
@@ -63,7 +55,7 @@ podman run --name conjur -d \
 registry.tld/conjur-appliance:12.5.0
 ```
 
-## 1.5.2 Method 2: Running Conjur master on the Podman host network
+### 2.1.2 Method 2: Running Conjur master on the Podman host network
 - Podman run command:
 ```console
 podman run --name conjur -d \
@@ -87,14 +79,13 @@ firewall-cmd --add-port 1999/tcp --permanent
 firewall-cmd --reload
 ```
 
-# 2.0 Configure the Conjur appliance as master
-## 2.1 Initialize the Conjur appliance
+## 2.2 Initialize the Conjur appliance
 - Edit the admin account password in `-p` option and the Conjur account (`cyberark`) according to your environment
 ```console
 podman exec conjur evoke configure master --accept-eula -h conjur.vx --master-altnames "conjur.vx" -p CyberArk123! cyberark
 ```
 
-## 2.2 Configure container to start on boot
+## 2.3 Configure container to start on boot
 - Run the Conjur container as systemd service and configure it to setup with container host
 - Ref: <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/running_containers_as_systemd_services_with_podman>
 ```console
@@ -102,7 +93,7 @@ podman generate systemd conjur --name --container-prefix="" --separator="" > /et
 systemctl enable conjur
 ```
 
-## 2.3 Setup Conjur certificates
+## 2.4 Setup Conjur certificates
 - The `conjur-certs.tgz` include personal certificate chain for CA, Master and follower, you should generate your own certificates
 - Refer to <https://joetanx.github.io/self-signed-ca/> for a guide to generate your own certificates
 - **Note**: In event of `error: cert already in hash table`, ensure that the Conjur serverfollower certificates do not contain the CA certificate
@@ -121,7 +112,7 @@ podman exec conjur rm -rf /opt/cyberark/dap/certificates
 rm -f conjur-certs.tgz
 ```
 
-## 2.4 Initialize Conjur CLI and login to conjur
+## 2.5 Initialize Conjur CLI and login to conjur
 ```console
 conjur init -u https://conjur.vx
 conjur login -i admin -p CyberArk123!
