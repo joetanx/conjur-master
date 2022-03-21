@@ -43,7 +43,6 @@ rm -f conjur-appliance_12.5.0.tar.gz conjur-cli-rhel-8.tar.gz
 ```console
 podman run --name conjur -d \
 --restart=unless-stopped \
---security-opt seccomp=unconfined \
 -p "443:443" -p "444:444" -p "5432:5432" -p "1999:1999" \
 --log-driver journald \
 -v /opt/conjur/config:/etc/conjur/config:Z \
@@ -59,7 +58,6 @@ registry.tld/conjur-appliance:12.5.0
 ```console
 podman run --name conjur -d \
 --restart=unless-stopped \
---security-opt seccomp=unconfined \
 --network host \
 --log-driver journald \
 -v /opt/conjur/config:/etc/conjur/config:Z \
