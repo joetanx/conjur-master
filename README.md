@@ -11,7 +11,7 @@
 - Prepare data directories: these directories will be mounted to the Conjur container as volumes
 - Setup [Conjur CLI](https://github.com/cyberark/cyberark-conjur-cli): the client tool to interface with Conjur
 ```console
-yum install -y podman
+yum -y install podman
 podman load -i conjur-appliance_12.5.0.tar.gz
 mkdir -p /opt/conjur/{security,config,backups,seeds,logs}
 curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
