@@ -17,11 +17,10 @@ mkdir -p /opt/conjur/{security,config,backups,seeds,logs}
 curl -L -o conjur-cli-rhel-8.tar.gz https://github.com/cyberark/conjur-api-python3/releases/download/v7.1.0/conjur-cli-rhel-8.tar.gz
 tar xvf conjur-cli-rhel-8.tar.gz
 mv conjur /usr/local/bin/
-rm -f conjur-cli-rhel-8.tar.gz
 ```
 - Clean-up
 ```console
-rm -f conjur-appliance_12.5.0.tar.gz
+rm -f conjur-appliance_12.5.0.tar.gz conjur-cli-rhel-8.tar.gz
 ```
 
 ## 1.1 Note on SELinux and Container Volumes
