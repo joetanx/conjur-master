@@ -38,6 +38,7 @@ rm -f conjur-appliance_12.6.0.tar.gz conjur-cli-rhel-8.tar.gz
     - `:Z` - indicates that content is is private and unshared
 
 # 2.0. Deploy Conjur master
+## 2.1. Run Conjur appliance container
 ### 2.1.1 Method 1: Running Conjur master on the default bridge network
 - Podman run command:
 ```console
@@ -91,9 +92,17 @@ systemctl enable conjur
 ```
 
 ## 2.4 Setup Conjur certificates
-- The `conjur-certs.tgz` include personal certificate chain for CA, Master and follower, you should generate your own certificates
+- The `conjur-certs.tgz` includes my personal certificate chain for CA, leader and follower, you should generate your own certificates
 - Refer to <https://joetanx.github.io/self-signed-ca/> for a guide to generate your own certificates
-- **Note**: In event of `error: cert already in hash table`, ensure that the Conjur serverfollower certificates do not contain the CA certificate
+- ☝️ **Note**: The Common Name of Conjur certificates should be the FQDN of the access endpoint, otherwise errors will occur
+
+|Certificate|Purpose|Common Name|Subject Alternative Names|
+|---|---|---|---|
+|central.pem|Certificate Authority|Central Authority||
+|conjur.vx.pem / conjur.vx.key|Conjur cluster certificate|conjur.vx|conjur.vx|
+|follower.conjur.svc.cluster.local.pem / follower.conjur.svc.cluster.local.key|Conjur follower certificate|follower.conjur.svc.cluster.local|follower.conjur.svc.cluster.local|
+
+- ☝️ **Note**: In event of `error: cert already in hash table`, ensure that the Conjur serverfollower certificates do not contain the CA certificate
 ```console
 curl -L -o conjur-certs.tgz https://github.com/joetanx/conjur-master/raw/main/conjur-certs.tgz
 podman exec conjur mkdir -p /opt/cyberark/dap/certificates
