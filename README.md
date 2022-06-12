@@ -1,4 +1,4 @@
-# Setup Conjur Enterprise master on RHEL with Podman
+# Setup standalone Conjur Enterprise leader on RHEL with Podman
 
 ### Software Versions
 - RHEL 9.0
